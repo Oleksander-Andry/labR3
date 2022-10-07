@@ -1,0 +1,264 @@
+using System;
+
+namespace VV_Pract_2
+{
+    public class MatriX
+    {
+        private Int32 Rows, Cols;
+        private double[][] MTRX;
+
+        public MatriX()
+        {
+            set_razm(3, 3);
+            set_MTRX_rand();
+        }
+        public MatriX(Int32 a, Int32 b)
+        {
+            set_razm(a, b);
+            set_MTRX_rand();
+        }
+        public MatriX(Int32 a, Int32 b, Int32 c)
+        {
+            set_razm(a, b);
+            set_MTRX();
+        }
+
+        public void set_razm(Int32 a, Int32 b)
+        {
+            Rows = a; Cols = b;
+            MTRX = new double[a][];
+            for (int i = 0; i < a; i++)
+            {
+                MTRX[i] = new double[b];
+            }
+        }
+        public void set_MTRX()
+        {
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    double tmp;
+                    tmp = Convert.ToDouble(Console.ReadLine());
+                    MTRX[i][j] = tmp;
+                }
+            }
+        }
+        public void set_MTRX_rand()
+        {
+            Random rnd = new Random();
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    MTRX[i][j] = rnd.Next(0, 10);
+                }
+            }
+        }
+        public void PrintObj()
+        {
+            for (int i = 0; i < Rows; i++)
+            {
+                for (int j = 0; j < Cols; j++)
+                {
+                    Console.Write(Convert.ToString(MTRX[i][j]) + "\t");
+                }
+                Console.WriteLine();
+            }
+        }
+
+        public void set_ind(Int32 x, Int32 y, double A)
+        {
+            MTRX[x][y] = A;
+        }
+        public Int32 get_Rows()
+        {
+            return Rows;
+        }
+        public Int32 get_Cols()
+        {
+            return Cols;
+        }
+        public double get_ind(Int32 x, Int32 y)
+        {
+            return MTRX[x][y];
+        }
+
+        public static VectR operator *(VectR A, MatriX B)
+        {
+            if (B.get_Cols() != A.get_razm())
+            {
+                throw new Exception("Cant mul! Vector lenght must = matrix cols");
+            }
+
+            VectR result = new VectR(A.get_razm());
+
+            for (var i = 0; i < B.get_Rows(); i++)
+            {
+                result.set_ind(i, 0);
+
+                for (var k = 0; k < B.get_Cols(); k++)
+                {
+                    result.set_ind(i, result.get_ind(i) + (B.get_ind(i, k) * A.get_ind(k)));
+                }
+            }
+            return result;
+        }
+        public static MatriX operator *(MatriX AA, double A)
+        {
+            for (int i = 0; i < AA.get_Rows(); i++)
+            {
+                for (int j = 0; j < AA.get_Cols(); j++)
+                {
+                    AA.set_ind(i, j, AA.get_ind(i, j) * A);
+                }
+            }
+            return AA;
+        }
+        public static MatriX operator *(MatriX A, MatriX AA)
+        {
+            if (A.get_Rows() != AA.get_Rows() || A.get_Cols() != AA.get_Cols())
+            {
+                throw new Exception("Cant mul! Matrix rows and cols must = another matrix rows and cols!");
+            }
+            for (int i = 0; i < A.get_Rows(); i++)
+            {
+                for (int j = 0; j < A.get_Cols(); j++)
+                {
+                    A.set_ind(i, j, A.get_ind(i, j) * AA.get_ind(i, j));
+                }
+            }
+            return A;
+        }
+    }
+
+    public class VectR
+    {
+        private Int32 Rows;
+        private double[] VCT;
+
+        public VectR()
+        {
+            set_Rows(3);
+            set_arr_rand();
+        }
+        public VectR(Int32 a)
+        {
+            set_Rows(a);
+            set_arr_rand();
+        }
+
+        public void set_Rows(Int32 a)
+        {
+            Rows = a;
+            VCT = new double[Rows];
+        }
+        public void set_arr_rand()
+        {
+            Random rnd = new Random();
+            for (int i = 0; i < Rows; i++)
+            {
+                VCT[i] = rnd.Next(0, 10);
+            }
+        }
+        public void set_arr()
+        {
+            for (int i = 0; i < Rows; i++)
+            {
+                double tmp;
+                tmp = Convert.ToDouble(Console.ReadLine());
+                VCT[i] = tmp;
+            }
+        }
+
+        public double get_ind(Int32 a)
+        {
+            return VCT[a];
+        }
+        public Int32 get_razm()
+        {
+            return Rows;
+        }
+        public void set_ind(Int32 AA, double A)
+        {
+            VCT[AA] = A;
+        }
+
+        public void PrintObj()
+        {
+            for (int i = 0; i < Rows; i++)
+            {
+                Console.Write(Convert.ToString(VCT[i]) + "\t");
+            }
+            Console.WriteLine();
+        }
+
+        public static MatriX operator *(MatriX A, VectR B)
+        { MatriX resultMatrix = new MatriX(A.get_Rows(), A.get_Cols());
+            if (A.get_Cols() <= 1)
+            {
+                throw new Exception("Cant mul! Matrix must exist >1 cols");
+            }
+            if (A.get_Rows() != B.get_razm())
+            {
+                throw new Exception("Cant mul! Matrix cols must = vector lenght!");
+            }
+            for (var i = 0; i < resultMatrix.get_Rows(); i++)
+            {
+                for (var j = 0; j < resultMatrix.get_Cols(); j++)
+                {
+                    resultMatrix.set_ind(i, j, A.get_ind(i, j) * B.get_ind(j));
+                }
+            }
+            return resultMatrix;
+        }
+        public static VectR operator *(VectR A, double AA)
+        {
+            for (int i = 0; i < A.get_razm(); i++)
+            {
+                A.set_ind(i, A.get_ind(i) * AA);
+            }
+            return A;
+        }
+        public static VectR operator *(VectR A, VectR AA)
+        {
+            if (A.get_razm() != AA.get_razm())
+            {
+                throw new Exception("Cant mul! Vector size must = vector size!");
+            }
+            for (int i = 0; i < A.get_razm(); i++)
+            {
+                A.set_ind(i, A.get_ind(i) * AA.get_ind(i));
+            }
+            return A;
+        }
+    }
+    class Program
+    {
+        public static void Main(string[] args)
+        {
+            MatriX MX = new MatriX(3, 3);
+            VectR VR = new VectR(3);
+            MatriX MX_1 = new MatriX(3, 3);
+            VectR VR_1 = new VectR(3);
+
+            Console.Write("Matrix = \n"); MX.PrintObj();
+            Console.Write("\n\nVector = "); VR.PrintObj();
+
+            Console.Write("\n\nM*V=\n"); MX_1 = MX * VR; MX_1.PrintObj();
+            Console.Write("\n\nV*M=\n"); VR_1 = VR * MX; VR_1.PrintObj();
+
+            Console.Write("\n\nM*10=\n"); MX = MX * 10d; MX.PrintObj();
+            Console.Write("\n\nV*10= "); VR = VR * 10d; VR.PrintObj();
+
+            Console.Write("\n\nM1 = \n"); MX.PrintObj();
+            MatriX MX2 = new MatriX(3, 3); Console.Write("\nM2 = \n"); MX2.PrintObj();
+            MX = MX * MX2; Console.Write("\nM1*M2 = \n"); MX.PrintObj();
+            Console.Write("\n\nV1 = "); VR.PrintObj();
+            VectR VR2 = new VectR(3); Console.Write("\nV2 = "); VR2.PrintObj();
+            VR = VR * VR2; Console.Write("\nV1*V2 = "); VR.PrintObj();
+            Console.Write("\n\n\nPress any key to continue . . . ");
+            Console.ReadKey(true);
+        }
+    }
+}
